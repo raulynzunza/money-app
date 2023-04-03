@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import './index.css';
 import { Link } from 'react-router-dom'
+import { onLogin } from '../../api/singinForm'
+import AlertDanger from '../../components/AlertDanger'
 
 interface Event {
   value: string
@@ -13,6 +15,9 @@ const login = () => {
     password: ''
   })
 
+  const [flag, setFlag] = useState(false)
+  const [message, setMessage] = useState('')
+
   const onInputChange = ({ target }: any) => {
     const { name, value } = target
     setUser({
@@ -21,9 +26,22 @@ const login = () => {
     })
   }
 
-  const onSubmitForm = async (event: React.FormEvent) => {
-    event.preventDefault();    
-        
+  const onSubmitForm = async (event: any) => {
+    event.preventDefault();
+
+    const email = event.target[0].value;
+    const password = event.target[1].value;
+
+    const { flag, message } = await onLogin(email, password);
+
+    setFlag(flag);
+    setMessage(message);
+
+    setTimeout(() => {
+      setFlag(false)
+      setMessage('');
+    }, 5000)
+
 
   }
 
@@ -40,6 +58,13 @@ const login = () => {
         <div className='forgot'>
           <Link to="#">Forgot your password?</Link>
           <Link to="register">Register</Link>
+          {
+
+            message === 'auth/wrong-password'
+            &&// @ts-ignore
+            <AlertDanger alert="alert alert-danger text-center animate__animated animate__fadeIn" message="User registered succesfully!" message="Email or password is incorrect" />
+
+          }
         </div>
       </form>
     </main>

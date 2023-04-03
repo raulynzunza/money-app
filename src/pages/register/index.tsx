@@ -4,11 +4,14 @@ import { Link } from 'react-router-dom'
 import { onRegister } from '../../api/register'
 import 'animate.css';
 
+import AlertSuccess from '../../components/AlertSuccess'
+import AlertDanger from '../../components/AlertDanger'
+
 interface Event {
   value: string
 }
 
-const login = () => {
+const register = () => {
 
   const [user, setUser] = useState({
     name: '',
@@ -16,6 +19,7 @@ const login = () => {
   })
 
   const [alert, setAlert] = useState(false)
+  const [message, setMessage] = useState('')
 
   const onInputChange = ({ target }: any) => {
     const { name, value } = target
@@ -28,11 +32,13 @@ const login = () => {
   const onSubmitForm = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const flag = await onRegister(user)
-    setAlert(flag)
+    const { flag, message } = await onRegister(user);
+    setAlert(flag);
+    setMessage(message);
 
     setTimeout(() => {
       setAlert(false)
+      setMessage('');
     }, 5000)
 
   }
@@ -51,13 +57,28 @@ const login = () => {
           </div>
           {
             alert
-            &&
-            <div>
-              <div className={`alert-message alert alert-success text-center animate__animated animate__fadeIn `} role="alert">
-                User registered succesfully!
-              </div>
-            </div>
+              &&
+              <AlertSuccess alert="alert-message alert alert-success text-center animate__animated animate__fadeIn" message="User registered succesfully!" />                                                 
           }
+          {
+            message === 'auth/invalid-email'
+            ?
+            // @ts-ignore
+            <AlertDanger alert="alert alert-danger text-center animate__animated animate__fadeIn" message="User registered succesfully!" message="The email you entered is not valid"/>                
+            :
+              message === 'auth/weak-password' 
+              ?
+              // @ts-ignore
+              <AlertDanger alert="alert alert-danger text-center animate__animated animate__fadeIn" message="User registered succesfully!" message="Your password must be at least 6 digits"/> 
+              :
+                message === 'auth/missing-password'
+                ?// @ts-ignore
+                <AlertDanger alert="alert alert-danger text-center animate__animated animate__fadeIn" message="User registered succesfully!" message="You must write a password"/> 
+                :
+                  message === 'auth/email-already-in-use'
+                  &&// @ts-ignore
+                  <AlertDanger alert="alert alert-danger text-center animate__animated animate__fadeIn" message="User registered succesfully!" message="There is already an account with that email"/> 
+          }     
 
         </div>
       </form>
@@ -65,4 +86,4 @@ const login = () => {
   )
 }
 
-export default login
+export default register

@@ -6,14 +6,25 @@ interface User {
     password: string
 }
 
-let flag = false
+let object = {
+  flag: false,
+  message: ''
+}
 
 export const onRegister = async (user: User) => {
     try {
         const userCredentials = await createUserWithEmailAndPassword(auth, user.name, user.password)
-        flag = true            
-      } catch (error) {
-        flag = false
+        object = {
+          flag: true,
+          message: 'User registered successfully'
+        }           
+      } catch (error: any) {
+        object = {
+          flag: false,
+          message: error?.code
+        }    
+        console.log(error?.message)
+        console.log(error?.code)        
       }
-      return flag
+      return object
 }
