@@ -1,10 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import Login from './pages/login'
+
+
+import { BrowserRouter } from "react-router-dom";
+import MoneyApp from './MoneyApp';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Login />
+    <BrowserRouter>
+      <MoneyApp />
+    </BrowserRouter>
   </React.StrictMode>,
 )
