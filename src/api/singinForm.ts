@@ -4,26 +4,28 @@ import { auth } from '../data/firebase'
 
 let obj = {
     flag: false,
-    message: ''
+    message: '',
+    token: ''
 }
 export const onLogin = async (email: string, password: string) => {
     try {
 
-        const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+        const userCredentials: any = await signInWithEmailAndPassword(auth, email, password);            
+        
+
         obj = {
             flag: false,
-            message: ''
+            message: '',
+            token: userCredentials.user.email
         }
-
-        console.log(userCredentials);
            
       } catch (error: any) {
         obj = {
             flag: true,
-            message: error.code
-        }
-        console.log(error.code)
-      }      
-      
+            message: error.code,
+            token: ''
+        }        
+      }          
+       
       return obj
 }
