@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import './register.css';
 import { Link } from 'react-router-dom'
-import { onRegister } from '../../api/register'
 import 'animate.css';
-
-import { postMoney } from '../../api/rest'
-
 import AlertSuccess from '../../components/AlertSuccess'
 import AlertDanger from '../../components/AlertDanger'
+import axios from 'axios';
 
 interface Event {
   value: string
@@ -17,6 +14,7 @@ const register = () => {
 
   const [user, setUser] = useState({
     name: '',
+    email: '',
     password: '',
     money: ''
   })
@@ -38,13 +36,26 @@ const register = () => {
 
     setLoading(true);
 
-    const { flag, message } = await onRegister(user);
-    message === 'User registered successfully' && await postMoney(user.money, user.name)
-    setLoading(false)
-    setAlert(flag);
-    setMessage(message);
+    await axios.post(import.meta.env.VITE_REACT_APP_API_URL + '/users', {
+      name: user.name,
+      email: user.email,
+      password: user.password
+    })
+      .then(async (resp) => {
+        await axios.post(import.meta.env.VITE_REACT_APP_API_URL + '/accounts', {
+          balance: user.money,
+          userId: resp.data.id
+        }).then(resp => {
+          setLoading(false)
+          setAlert(true);
+          setMessage("User registered succesfully!");
+        })
+      })
+
 
   }
+
+
 
 
   return (
@@ -52,9 +63,10 @@ const register = () => {
       <form onSubmit={onSubmitForm} className='form'>
         <h1>Register</h1>
         <div>
-          <input type="email" placeholder='Email' onChange={onInputChange} name='name' className='inputs'/>
-          <input type="password" placeholder='Password' onChange={onInputChange} name='password' className='inputs'/>
-          <input type="number" placeholder='Current money' onChange={onInputChange} name='money' className='inputs'/>
+          <input type="text" placeholder='Name' onChange={onInputChange} name='name' className='inputs' />
+          <input type="email" placeholder='Email' onChange={onInputChange} name='email' className='inputs' />
+          <input type="password" placeholder='Password' onChange={onInputChange} name='password' className='inputs' />
+          <input type="number" placeholder='Current money' onChange={onInputChange} name='money' className='inputs' />
           <button className='button'>Register</button>
           <div className="forgot">
             <Link to="/">Back to login</Link>

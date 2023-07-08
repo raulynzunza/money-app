@@ -42,8 +42,14 @@
 .add-form {
     width: 50%;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
-
+.no-scroll {
+    /* Debe tener altura específica para que funcione */
+    max-height: 100vh;
+    overflow: hidden;
+}
 .out-icon {
     font-size: 1.7rem;
     color: white;
@@ -57,4 +63,10 @@
 
 .out-icon:hover {
     background-color: #d31f49;
+}
+
+.table-container {
+    max-width: 90%;
+    margin: 0 auto;
+    max-height: 500px;
 }

@@ -1,0 +1,13 @@
+.modal-back {
+    background-color: #af24671c;
+    backdrop-filter: blur(.5rem);
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+}
+
+.modal-container {
+    background-color: #ffffff9c;    
+    padding: 50px;  
+    box-shadow: 0 0 5px #7170707a;
+}

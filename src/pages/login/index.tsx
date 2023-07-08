@@ -1,29 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './login.css';
 import { Link, useNavigate } from 'react-router-dom'
-import { onLogin } from '../../api/singinForm'
 import AlertDanger from '../../components/AlertDanger'
-
-interface Event {
-  value: string
-}
+import axios from 'axios'
 
 const login = () => {
 
   const [user, setUser] = useState({
-    name: '',
+    email: '',
     password: ''
   })
 
   const [login, setLogin] = useState({
     flag: false,
-    message: '',
-    token: ''
   })
 
   const [isLoading, setLoading] = useState(false)
-
-
 
   const navigate = useNavigate()
 
@@ -38,31 +30,32 @@ const login = () => {
   const onSubmitForm = async (event: any) => {
     event.preventDefault();
 
-    const email = event.target[0].value;
-    const password = event.target[1].value;
-    
     setLoading(true);
 
-    const { flag, message, token } = await onLogin(email, password);        
+    const userReply = await axios({
+      url: `${import.meta.env.VITE_REACT_APP_API_URL}/users/${user.email}/${user.password}`,
+      method: 'GET',
+    })
 
-    setLogin({
-      flag,
-      message,
-      token
-    });
+    const res = await userReply
 
+    if (res.data.message) {
+      localStorage.setItem('userId', res.data.account.id)
+      setLogin({
+        flag: false,
+      })
+      navigate('/menu')
+    }
+    else {
+      setLogin({
+        flag: true,
+      })
+    }
     setLoading(false);
-
 
   }
 
-  useEffect(() => {
-    if (login.token.length > 0) {
-      localStorage.setItem('token', login.token);
-      navigate('/menu')
-    }
-  }, [login])
-  
+
 
 
   return (
@@ -70,8 +63,8 @@ const login = () => {
       <form onSubmit={onSubmitForm} className='form'>
         <h1>Login</h1>
         <div>
-          <input type="text" placeholder='Username' onChange={onInputChange} name='name' className='inputs'/>
-          <input type="password" placeholder='Password' onChange={onInputChange} name='password' className='inputs'/>
+          <input type="email" placeholder='email' onChange={onInputChange} name='email' className='inputs' />
+          <input type="password" placeholder='Password' onChange={onInputChange} name='password' className='inputs' />
           <button className='button'>Login</button>
         </div>
         <div className='forgot'>
@@ -87,7 +80,7 @@ const login = () => {
           }
           {
 
-            login.message === 'auth/wrong-password'
+            login.flag
             &&
             <AlertDanger alert="alert alert-danger text-center animate__animated animate__fadeIn" message="Email or password is incorrect" />
 
